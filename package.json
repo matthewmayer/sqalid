@@ -1,0 +1,15 @@
+{
+  "name": "squalid",
+  "version": "0.0.1",
+  "description": "A simple SQLite wrapper",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matt Mayer",
+  "license": "MIT",
+  "dependencies": {
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
+  }
+}
