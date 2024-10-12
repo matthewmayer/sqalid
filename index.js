@@ -10,6 +10,9 @@ async function openDatabase(filename) {
     })
 }
 async function createFromSchema(filename) {
+    if (!db) {
+        throw new Error("No database")
+    }
     if (!fs.existsSync(filename)) {
         throw new Error(`Schema file ${filename} does not exist`)
     }
@@ -54,9 +57,15 @@ async function rawSelect(sql, params) {
     return rows
 }
 async function getPreparedStatement(sql) {
+    if (!db) {
+        throw ("No database")
+    }
     return await db.prepare(sql)
 }
 async function runPreparedStatement(statement, params, info) {
+    if (!db) {
+        throw ("No database")
+    }
     try {
         const ret = await statement.run(...params)
         return ret
@@ -86,7 +95,7 @@ async function deleteWhere(sql, params) {
     if (!db) {
         throw ("No database")
     }
-    await db.run(`DELETE FROM ${sql}`, [params])
+    await db.run(`DELETE FROM ${sql}`, params)
 }
 async function truncate(table) {
     if (!db) {
