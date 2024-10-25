@@ -28,6 +28,9 @@ await db.openDatabase("test.sqlite");
 // run all the sql in the schema file
 await db.createFromSchema("schema.sql");
 
+// optionally run migrations e.g. ALTER TABLE statements
+await db.runMigrations("migrations.sql");
+
 // insert a new thing
 const thing_id = await db.insert("things (name, size) VALUES (?, ?)", ["Thing 1", 10]);
 

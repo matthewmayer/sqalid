@@ -123,6 +123,25 @@ async function m2m(table1, table2, id1, id2, linked) {
         }
     }
 }
+async function runMigrations(filename, verbose = true) {
+    const migrations = fs.readFileSync(filename, 'utf8')
+    const statements = migrations.split(';')
+    for (const statement of statements) {
+        if (statement.trim() === '') {
+            continue
+        }
+        try {
+            await db.exec(statement)
+            if (verbose) {
+                console.log("Migration applied: " + statement)
+            }
+        } catch (e) {
+            if (verbose) {
+                console.log("Migration already applied: " + statement)
+            }
+        }
+    }
+}
 
 
 module.exports = {
@@ -135,6 +154,7 @@ module.exports = {
     insert,
     m2m,
     openDatabase,
+    runMigrations,
     selectAll,
     selectOne,
     selectValue,
