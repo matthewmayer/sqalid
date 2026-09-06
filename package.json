@@ -1,6 +1,6 @@
 {
   "name": "squalid",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A simple SQLite wrapper",
   "main": "index.js",
   "scripts": {
@@ -16,7 +16,12 @@
     "type": "git",
     "url": "git+https://github.com/matthewmayer/squalid.git"
   },
-  "keywords": ["sqlite", "wrapper", "database", "sql"],
+  "keywords": [
+    "sqlite",
+    "wrapper",
+    "database",
+    "sql"
+  ],
   "bugs": {
     "url": "https://github.com/matthewmayer/squalid/issues"
   },
