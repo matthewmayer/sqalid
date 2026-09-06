@@ -10,7 +10,7 @@ npm install squalid
 
 ## Usage
 
-Create a schema e.g. in a file called `schema.txt
+Create a schema e.g. in a file called `schema.sql`
 
 ```sql
 CREATE TABLE IF NOT EXISTS `things` (
@@ -31,14 +31,14 @@ await db.createFromSchema("schema.sql");
 // optionally run migrations e.g. ALTER TABLE statements
 await db.runMigrations("migrations.sql");
 
-// insert a new thing
+// insert a new thing, and return its id
 const thing_id = await db.insert("things (name, size) VALUES (?, ?)", ["Thing 1", 10]);
 
-// select all things
+// select all things as an array
 const things = await db.selectAll("* FROM things");
 console.dir(things);
 
-// select one thing
+// select one thing. Returns the object, or undefined
 const thing = await db.selectOne("* FROM things WHERE id = ?", [thing_id]);
 console.log(thing)
 
