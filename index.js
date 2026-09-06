@@ -2,6 +2,7 @@
 const sqlite = require('sqlite')
 const sqlite3 = require('sqlite3')
 const fs = require('fs')
+const path = require('path')
 let db = null
 async function openDatabase(filename) {
     db = await sqlite.open({
@@ -79,7 +80,7 @@ async function truncate(table) {
     }
     await db.run(`DELETE FROM ${table}`)
 }
-async function runMigrations(filename, verbose = false) {
+async function runMigrationFile(filename, verbose = false) {
     const migrations = fs.readFileSync(filename, 'utf8')
     const statements = migrations.split(';')
     for (const statement of statements) {
@@ -97,6 +98,44 @@ async function runMigrations(filename, verbose = false) {
             }
         }
     }
+}
+async function runMigrationsFolder(folder, verbose = false) {
+    if (!fs.existsSync(folder)) {
+        throw new Error(`Migrations folder ${folder} does not exist`)
+    }
+    const stat = fs.statSync(folder)
+    if (!stat.isDirectory()) {
+        throw new Error(`${folder} is not a directory`)
+    }
+    const files = fs.readdirSync(folder)
+    const sqlFiles = files
+        .filter(file => !file.startsWith('.') && file.toLowerCase().endsWith('.sql'))
+        .sort((a, b) => a.localeCompare(b))
+
+    for (const file of sqlFiles) {
+        const fullPath = path.join(folder, file)
+        const fileStat = fs.statSync(fullPath)
+        if (fileStat.isFile()) {
+            await runMigrationFile(fullPath, verbose)
+        }
+    }
+}
+async function runMigrations(filenameOrFolder, verbose = false) {
+    if (typeof filenameOrFolder === 'object' && filenameOrFolder !== null) {
+        if (filenameOrFolder.folder || filenameOrFolder.directory) {
+            return await runMigrationsFolder(filenameOrFolder.folder || filenameOrFolder.directory, verbose)
+        }
+        if (filenameOrFolder.file || filenameOrFolder.filename) {
+            return await runMigrationFile(filenameOrFolder.file || filenameOrFolder.filename, verbose)
+        }
+    }
+    if (fs.existsSync(filenameOrFolder)) {
+        const stat = fs.statSync(filenameOrFolder)
+        if (stat.isDirectory()) {
+            return await runMigrationsFolder(filenameOrFolder, verbose)
+        }
+    }
+    return await runMigrationFile(filenameOrFolder, verbose)
 }
 
 /* Undocumented stuff. Here be dragons! */
@@ -159,6 +198,9 @@ module.exports = {
     openDatabase,
     raw: db,
     runMigrations,
+    runMigrationsFolder,
+    runMigrationFolder: runMigrationsFolder,
+    runMigrationsFromFolder: runMigrationsFolder,
     selectAll,
     selectOne,
     selectValue,

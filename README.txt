@@ -30,6 +30,8 @@ await db.createFromSchema("schema.sql");
 
 // optionally run migrations e.g. ALTER TABLE statements
 await db.runMigrations("migrations.sql");
+// or run all .sql files from a migrations folder in alphabetical order
+await db.runMigrationsFolder("migrations/");
 
 // insert a new thing, and return its id
 const thing_id = await db.insert("things (name, size) VALUES (?, ?)", ["Thing 1", 10]);
